@@ -6,6 +6,7 @@ export type ErrorCode =
 	| "NOT_FOUND"
 	| "UNAUTHORIZED"
 	| "FORBIDDEN"
+	| "CONFLICT"
 	| "EMAIL_CONFLICT"
 	| "AUTH_FAILED"
 	| "INTERNAL_ERROR";
@@ -46,7 +47,7 @@ class AppError extends Error {
 	}
 
 	static badRequest(message = "Bad request.") {
-		return new AppError({ statusCode: status.BAD_REQUEST, message, code: "NOT_FOUND" });
+		return new AppError({ statusCode: status.BAD_REQUEST, message, code: "BAD_REQUEST" });
 	}
 
 	static unauthorized(message = "Unauthorize access.") {
@@ -57,7 +58,7 @@ class AppError extends Error {
 		return new AppError({ statusCode: status.FORBIDDEN, message, code: "FORBIDDEN" });
 	}
 
-	static conflict(message: string, code: "EMAIL_CONFLICT") {
+	static conflict(message: string, code: "CONFLICT" | "EMAIL_CONFLICT" = "CONFLICT") {
 		return new AppError({ statusCode: status.CONFLICT, message, code });
 	}
 

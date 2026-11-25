@@ -12,7 +12,9 @@ const globalErrorHandler = (err: unknown, req: Request, res: Response, next: Nex
 		message = err.message;
 		errors = err.meta ?? err.code;
 	} else if (err instanceof Error) {
-		message = err.message || message;
+		const causeMessage =
+			err.cause instanceof Error ? err.cause.message : undefined;
+		message = causeMessage ? `${err.message} — ${causeMessage}` : err.message || message;
 		errors = err.stack ?? null;
 	} else if (typeof err === "string") {
 		message = err;
