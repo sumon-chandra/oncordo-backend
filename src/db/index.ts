@@ -6,20 +6,18 @@ const globalForDb = globalThis as unknown as {
   sql: ReturnType<typeof postgres> | undefined;
 };
 
-// Reuse connection pool across hot-reloads in development (tsx watch / bun --watch)
+// Reuse connection pool across warm serverless instances and local hot-reloads
 // `prepare: false` is required for Supabase / PgBouncer transaction poolers (port 6543)
 const sql =
   globalForDb.sql ??
   postgres(envConfigs.databaseUrl, {
-    max: 20,
-    idle_timeout: 30,
-    connect_timeout: 5,
+    max: process.env.VERCEL ? 5 : 20,
+    idle_timeout: 20,
+    connect_timeout: 10,
     prepare: false,
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.sql = sql;
-}
+globalForDb.sql = sql;
 
 export const db = drizzle({
   client: sql,
